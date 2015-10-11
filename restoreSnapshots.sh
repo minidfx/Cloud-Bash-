@@ -14,7 +14,21 @@ NETWORK_ID=685a78ae-602e-4b80-9b54-97bdfcef5c2f
 
 for ID in $snapshots
 do
-	echo "Restoring and starting $ID ..."
+	echo -n "Restoring and starting $ID ..."
+	#nova boot --flavor=$FLAVOR --image=$ID --nic net-id=$NETWORK_ID $ID > /dev/null
+	echo "Done".
 
-	nova boot --flavor=$FLAVOR --image=$ID --nic net-id=$NETWORK_ID $ID
+	echo -n "Checking the server is running ..."
+
+	echo "Done."
+done
+
+for ID in $snapshots
+do
+	#$network=`nova list | grep $ID | sed -n 's/.*\=\([^|]*\).*/\1/p'`
+	IFS=', ' read -a $addresses <<< "$network"
+
+	if [ $addresses[@] -lt 1 ]; then
+		echo "ERROR: The server $ID isn't started!"
+	fi
 done
