@@ -15,26 +15,31 @@ echo "Done".
 
 MongoDB_IP=`./getIP.sh MongoDB`
 
-# Create the startup script the RESTClient
-echo -e "#\!/bin/bash\n\n\pyhton restclient.py $MongoDB_IP &" > restClient.sh
+if [ -z "$MongoDB_IP" ]; then
+			echo "ERROR: Cannot found the MangoDB IP address."
+			exit 1
+fi
+
+# Create the startup script for the RESTClient
+echo -e "#\!/bin/bash\n\npython ~/Downloads/restclient.py $MongoDB_IP &" > restClient.sh
 # Create the startup script for the RESTServer
-echo -e "#\!/bin/bash\n\n\pyhton restserver.py $MongoDB_IP &" > restServer.sh
+echo -e "#\!/bin/bash\n\npython ~/Downloads/restserver.py $MongoDB_IP &" > restServer.sh
 
 echo -n "Restoring and starting RESTServer ... "
-nova boot --user-data=./restServer.sh --flavor=$FLAVOR --image=RESTServer --nic net-id=$NETWORK_ID --security-groups $SECURITY_GROUP RESTServer > /dev/null
+nova boot --user-data=restServer.sh --flavor=$FLAVOR --image=RESTServer --nic net-id=$NETWORK_ID --security-groups $SECURITY_GROUP RESTServer > /dev/null
 nova floating-ip-associate RESTServer 86.119.33.32
 echo "Done".
 
 echo -n "Restoring and starting RESTClient ... "
-nova boot --user-data=./restClient.sh --flavor=$FLAVOR --image=RESTClient --nic net-id=$NETWORK_ID --security-groups $SECURITY_GROUP RESTClient > /dev/null
+nova boot --user-data=restClient.sh --flavor=$FLAVOR --image=RESTClient --nic net-id=$NETWORK_ID --security-groups $SECURITY_GROUP RESTClient > /dev/null
 nova floating-ip-associate RESTClient 86.119.33.34
 echo "Done".
 
 rm restClient.sh
 rm restServer.sh
 
-echo -n "Waiting 15 seconds for servers are started ... "
-sleep 15
+echo -n "Waiting 20 seconds for servers are started ... "
+sleep 20
 echo "Done."
 
 ./cacheServerList.sh
