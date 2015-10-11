@@ -20,7 +20,7 @@ do
 done
 
 echo -n "Retrieving list of servers ... "
-network=`nova list | grep $ID | sed -n 's/.*\=\([^|]*\).*/\1/p'`
+nova list > /tmp/servers.list
 echo "Done."
 
 echo -n "Waiting 7 seconds ... "
@@ -29,6 +29,7 @@ echo "Done."
 
 for ID in $snapshots
 do
+	network=`cat /tmp/servers.list | grep $ID | sed -n 's/.*\=\([^|]*\).*/\1/p'`
 	IFS=', ' read -ra addresses <<< "$network"
 
 	if [ ${#addresses[@]} -lt 1 ]; then

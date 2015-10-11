@@ -1,9 +1,19 @@
 #!/bin/sh
 
-source ./restoreSnapshots.sh $1
+SERVER1="MongoDB"
+SERVER2="RESTClient"
+SERVER3="RESTServer"
+SERVERS="$SERVER1,$SERVER2,$SERVER3"
+
+source ./restoreSnapshots.sh $SERVERS
+
+SERVER1_IP=`./getIP.sh $SERVER1`
+
+source ./executeCommand.sh $SERVER2 'python ~/Downloads/pyClient.py $SERVER1_IP &'
+source ./executeCommand.sh $SERVER3
 
 echo ""
-echo "Press A to abort the script and deleting the VMs previously created."
+echo "Enter A to abort the script and deleting the VMs previously created."
 
 read INPUT
 
