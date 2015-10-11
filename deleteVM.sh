@@ -8,5 +8,5 @@ if [ -z "$1" ]; then
         return 1
 fi
 
-echo "Deleting server $ID ..."
+echo "Deleting the server $ID ..."
 nova delete $ID

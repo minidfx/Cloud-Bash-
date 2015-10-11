@@ -14,21 +14,35 @@ NETWORK_ID=685a78ae-602e-4b80-9b54-97bdfcef5c2f
 
 for ID in $snapshots
 do
-	echo -n "Restoring and starting $ID ..."
-	#nova boot --flavor=$FLAVOR --image=$ID --nic net-id=$NETWORK_ID $ID > /dev/null
+	echo -n "Restoring and starting $ID ... "
+	nova boot --flavor=$FLAVOR --image=$ID --nic net-id=$NETWORK_ID $ID > /dev/null
 	echo "Done".
-
-	echo -n "Checking the server is running ..."
-
-	echo "Done."
 done
+
+echo -n "Retrieving list of servers ... "
+network=`nova list | grep $ID | sed -n 's/.*\=\([^|]*\).*/\1/p'`
+echo "Done."
+
+echo -n "Waiting 7 seconds ... "
+sleep 7
+echo "Done."
 
 for ID in $snapshots
 do
-	#$network=`nova list | grep $ID | sed -n 's/.*\=\([^|]*\).*/\1/p'`
-	IFS=', ' read -a $addresses <<< "$network"
+	IFS=', ' read -ra addresses <<< "$network"
 
-	if [ $addresses[@] -lt 1 ]; then
+	if [ ${#addresses[@]} -lt 1 ]; then
 		echo "ERROR: The server $ID isn't started!"
+	else
+		echo -n "Checking whether the server $ID (${addresses[0]}) is running ... "
+
+		# I send an empty string because the nc block when no data is sent.
+		result=`echo "" | nc ${addresses[0]} 22 | grep --color=never SSH`
+		
+		if [ -z "$result" ]; then
+			echo "ERROR: The server is not reachable over SSH."
+		else
+			echo "Done."
+		fi
 	fi
 done

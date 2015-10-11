@@ -2,6 +2,9 @@
 
 source ./restoreSnapshots.sh $1
 
+echo ""
+echo "Press A to abort the script and deleting the VMs previously created."
+
 read INPUT
 
 while [ "$INPUT" != "A" ]
@@ -13,7 +16,6 @@ IFS=',' read -a snapshots <<< "$1"
 
 for ID in $snapshots
 do
-	echo "Deleting the servere $ID ..." 
-       #source deleteVM.sh $ID
+	source deleteVM.sh $ID
 done
 
