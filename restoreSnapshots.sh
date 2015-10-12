@@ -4,8 +4,8 @@
 
 if [ -z "$1" ]; then
 	echo "ERROR: You have to specify a list of Snapshot IDs separate by a comma."
-	echo "Usage: source restoreSnapshot.sh <id1,id2,idn>"
-	return 1
+	echo "Usage: $0 <id1,id2,idn>"
+	exit 1
 fi
 
 IFS=',' read -a snapshots <<< "$1"
@@ -37,7 +37,7 @@ do
 
 		# I send an empty string because the nc block when no data is sent.
 		result=`echo "" | nc ${addresses[0]} 22 | grep --color=never SSH`
-		
+
 		if [ -z "$result" ]; then
 			echo "ERROR: The server is not reachable over SSH."
 		else
