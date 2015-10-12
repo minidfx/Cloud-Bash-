@@ -22,6 +22,5 @@ if [ -z "$IP" ] || [ $? != 0 ]; then
 fi
 
 echo -n "Executing the command $2 on on the SSH server $1 ... "
-echo "ssh $IP $2"
-#ssh $IP "$2"
+ssh $IP "$2"
 echo "Done."
