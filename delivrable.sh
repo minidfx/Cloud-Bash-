@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 SERVER1="MongoDB"
 SERVER2="RESTClient"
