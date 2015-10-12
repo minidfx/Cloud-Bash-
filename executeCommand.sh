@@ -16,12 +16,9 @@ fi
 
 IP=`./getIP.sh $1`
 
-if [ -z "$IP" ]; then
-         exit 1
-fi
-
-if [ "$IP" == "1" ]; then
-        exit 1
+if [ -z "$IP" ] || [ $? != 0 ]; then
+        echo "Cannot found the IP address of the server $1."
+        exit $?
 fi
 
 echo -n "Executing the command $2 on on the SSH server $1 ... "

@@ -21,6 +21,11 @@ done
 
 ./cacheServerList.sh
 
+if [ ! -f "/tmp/servers.list" ]; then
+			echo "The cache server doesn't exist."
+			exit 1
+fi
+
 echo -n "Waiting 7 seconds ... "
 sleep 7
 echo "Done."
