@@ -8,5 +8,8 @@ if [ -z "$1" ]; then
         exit 1
 fi
 
-echo "Deleting the server $ID ..."
-nova delete $ID
+for ID in $@
+do
+        echo "Deleting the server $ID ..."
+        nova delete $ID
+done
