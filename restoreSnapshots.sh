@@ -19,9 +19,7 @@ do
 	echo "Done".
 done
 
-echo -n "Retrieving list of servers ... "
-nova list > /tmp/servers.list
-echo "Done."
+./cacheServerList.sh
 
 echo -n "Waiting 7 seconds ... "
 sleep 7
