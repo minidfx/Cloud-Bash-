@@ -1,5 +1,4 @@
-
-#!/bin/bash
+#!/bin/sh
 
 # To use an Openstack cloud you need to authenticate against keystone, which
 # returns a **Token** and **Service Catalog**.  The catalog contains the
