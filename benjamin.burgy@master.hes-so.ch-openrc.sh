@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# The read command with the argument -r works only with Bash shell.
-if [ $SHELL != "/bin/bash" ]; then
+# The read command with the argument -r works only with Bash shell.i
+CURRENT_SHELL=`ps -hp $$ | awk '{ print $5 }'`
+
+if [ $CURRENT_SHELL != "/bin/bash" ]; then
       echo "The script supports only bash as shell."
       exit 1
 fi
