@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# The read command with the argument -r works only with Bash shell.
+if [ $SHELL != "/bin/bash" ]; then
+      echo "The script supports only bash as shell."
+      exit 1
+fi
+
 # To use an Openstack cloud you need to authenticate against keystone, which
 # returns a **Token** and **Service Catalog**.  The catalog contains the
 # endpoint for all services the user/tenant has access to - including nova,
