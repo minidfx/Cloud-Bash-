@@ -2,7 +2,7 @@
 
 ./restoreSnapshots.sh
 
-echo ""
+echo "Servers up."
 echo "Enter A to abort the script and deleting the VMs previously created."
 
 read INPUT

@@ -7,10 +7,6 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
-echo -n "Refreshing server list ... "
-./cacheServerList.sh
-echo "Done."
-
 echo -n "Looking for the address IP of $1 ... "
 addressIP=`./getIP.sh $1`
 
