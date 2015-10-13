@@ -9,8 +9,7 @@ if [ -z "$1" ]; then
 fi
 
 if [ ! -f "/tmp/servers.list" ]; then
-        echo "Cache of servers doesn't exist."
-        exit 1
+	./cacheServerList.sh
 fi
 
 network=`cat /tmp/servers.list | grep $1 | sed -n 's/.*\=\([^|]*\).*/\1/p'`

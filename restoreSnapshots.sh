@@ -11,61 +11,30 @@ nova boot --flavor=$FLAVOR --image=MongoDB --nic net-id=$NETWORK_ID --security-g
 nova floating-ip-associate MongoDB 86.119.33.239
 echo "Done".
 
-./cacheServerList.sh
-
+./waitForServer.sh MongoDB
 MongoDB_IP=`./getIP.sh MongoDB`
 
-if [ -z "$MongoDB_IP" ]; then
-			echo "ERROR: Cannot found the MangoDB IP address."
-			exit 1
-fi
-
 # Create the startup script for the RESTClient
-echo -e "#\!/bin/bash\n\npython ~/Downloads/restclient.py $MongoDB_IP &" > restClient.sh
+echo -e "#\!/bin/bash\n\npython /home/ubuntu/Downloads/restclient.py $MongoDB_IP &" > restClient.sh
 # Create the startup script for the RESTServer
-echo -e "#\!/bin/bash\n\npython ~/Downloads/restserver.py $MongoDB_IP &" > restServer.sh
+echo -e "#\!/bin/bash\n\npython /home/ubuntu/Downloads/restserver.py $MongoDB_IP &" > restServer.sh
 
 echo -n "Restoring and starting RESTServer ... "
-nova boot --user-data=restServer.sh --flavor=$FLAVOR --image=RESTServer --nic net-id=$NETWORK_ID --security-groups $SECURITY_GROUP RESTServer > /dev/null
+nova boot -debug --user-data=./restServer.sh --flavor=$FLAVOR --image=RESTServer --nic net-id=$NETWORK_ID --security-groups $SECURITY_GROUP RESTServer > /dev/null
 nova floating-ip-associate RESTServer 86.119.33.32
-echo "Done".
+echo "Done."
+
+exit 1
 
 echo -n "Restoring and starting RESTClient ... "
-nova boot --user-data=restClient.sh --flavor=$FLAVOR --image=RESTClient --nic net-id=$NETWORK_ID --security-groups $SECURITY_GROUP RESTClient > /dev/null
+nova boot --user-data=./restClient.sh --flavor=$FLAVOR --image=RESTClient --nic net-id=$NETWORK_ID --security-groups $SECURITY_GROUP RESTClient > /dev/null
 nova floating-ip-associate RESTClient 86.119.33.34
-echo "Done".
+echo "Done."
 
 rm restClient.sh
 rm restServer.sh
 
-echo -n "Waiting 20 seconds for servers are started ... "
-sleep 20
-echo "Done."
-
-./cacheServerList.sh
-
-if [ ! -f "/tmp/servers.list" ]; then
-			echo "The cache server doesn't exist."
-			exit 1
-fi
-
-for arg in "MongoDB" "RESTServer" "RESTClient"
+for arg in "RESTServer" "RESTClient"
 do
-	network=`cat /tmp/servers.list | grep $arg | sed -n 's/.*\=\([^|]*\).*/\1/p'`
-	IFS=', ' read -ra addresses <<< "$network"
-
-	if [ ${#addresses[@]} -lt 1 ]; then
-		echo "ERROR: The server $arg isn't started!"
-	else
-		echo -n "Checking whether the server $arg (${addresses[0]}) is running ... "
-
-		# I send an empty string because the nc block when no data is sent.
-		result=`echo "" | nc ${addresses[0]} 22 | grep --color=never SSH`
-
-		if [ -z "$result" ]; then
-			echo "ERROR: The server is not reachable over SSH."
-		else
-			echo "Done."
-		fi
-	fi
+	./waitForServer.sh $arg
 done
