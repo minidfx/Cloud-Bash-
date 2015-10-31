@@ -1,4 +1,4 @@
-# OpenStack-Scripts - Repository only for study purpose.
+# Cloud-bash-
 
 Contains scripts for managing servers, snapshots and networks.
 
